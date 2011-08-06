@@ -1,5 +1,7 @@
 Notes about how to compile:
 
+You need the DirecX June 2010 SDK installed.
+
 Pelles C:
 Includes & Lib
 - Add the include and lib path for the DirectX SDK
