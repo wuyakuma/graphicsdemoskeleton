@@ -2,8 +2,8 @@
 //
 // Skeleton Intro Coding
 //
-// by Wolfgang Engel 
-// Last time modified: 02/04/2007
+// by Wolfgang Engel (started in 2007)
+// Last time modified: 08/06/2011
 //
 ///////////////////////////////////////////////////////////////////////
 #define WIN32_LEAN_AND_MEAN
