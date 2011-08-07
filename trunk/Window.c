@@ -7,6 +7,7 @@
 //
 ///////////////////////////////////////////////////////////////////////
 #define WIN32_LEAN_AND_MEAN
+
 #include <Windows.h>
 #include <sal.h>
 #include <rpcsal.h>
@@ -20,7 +21,7 @@
 //#define DECLSPEC_SELECTANY 
 //#endif
 
-#define DEFINE_GUIDW(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) EXTERN_C const GUID DECLSPEC_SELECTANY name = { l, w1, w2, { b1, b2,  b3,  b4,  b5,  b6,  b7,  b8 } }
+#define DEFINE_GUIDW(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) const GUID DECLSPEC_SELECTANY name = { l, w1, w2, { b1, b2,  b3,  b4,  b5,  b6,  b7,  b8 } }
 DEFINE_GUIDW(IID_ID3D10Texture2D,0x9B7E4C04,0x342C,0x4106,0xA1,0x9F,0x4F,0x27,0x04,0xF6,0x89,0xF0);
 
 #include <d3d10.h>
@@ -28,7 +29,8 @@ DEFINE_GUIDW(IID_ID3D10Texture2D,0x9B7E4C04,0x342C,0x4106,0xA1,0x9F,0x4F,0x27,0x
 // define the size of the window
 #define WINWIDTH 800 
 #define WINHEIGHT 600
-
+#define WINPOSX 200 
+#define WINPOSY 200
 
 // makes the applicaton behave well with windows
 // allows to remove some system calls to reduce size
@@ -48,12 +50,12 @@ DWORD		g_CurrentTime;
 BOOL		g_BRunning;
 
 // this is a simplified entry point ...
-void __cdecl WinMainCRTStartup()
+void __stdcall WinMainCRTStartup()
 {
     ExitProcess(WinMain(GetModuleHandle(NULL), NULL, NULL, 0));
 }
 
-// this is the main windows entry point ... the assembly version is in crt0gui.asm
+// this is the main windows entry point ... 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	// the most simple window
@@ -61,7 +63,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 								"STATIC", 
 								0, 
 								WS_POPUP | WS_VISIBLE, 
-								0, 0, 
+								WINPOSX, WINPOSY, 
 								WINWIDTH, WINHEIGHT, 
 								0, 0, 0, 0);
 
@@ -79,23 +81,25 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	sd.OutputWindow = hWnd;
 	sd.SampleDesc.Count = 1;
 	sd.SampleDesc.Quality = 0;
+	sd.SwapEffect = DXGI_SWAP_EFFECT_SEQUENTIAL;
+	sd.Flags = 0;
 
 	// full-screen or not
 	sd.Windowed = TRUE;
- 
-	D3D10CreateDeviceAndSwapChain( NULL, 
-									D3D10_DRIVER_TYPE_HARDWARE, 
-									NULL,
-									D3D10_CREATE_DEVICE_DEBUG ,
-									D3D10_SDK_VERSION, 
-									&sd,
-									&g_pSwapChain,
-									&g_pd3dDevice );
+
+ 	D3D10CreateDeviceAndSwapChain(NULL,
+			D3D10_DRIVER_TYPE_HARDWARE,
+			NULL, D3D10_CREATE_DEVICE_DEBUG,
+			D3D10_SDK_VERSION,
+			&sd,
+			&g_pSwapChain,
+			&g_pd3dDevice);
 
 
 	// Create a render target view
 	ID3D10Texture2D *pBackBuffer;
 	g_pSwapChain->lpVtbl->GetBuffer( g_pSwapChain, 0, (REFIID ) &IID_ID3D10Texture2D, (LPVOID*)&(pBackBuffer) ) ;
+
 	
 	g_pd3dDevice->lpVtbl->CreateRenderTargetView( g_pd3dDevice, (struct ID3D10Resource *)pBackBuffer, NULL, &g_pRenderTargetView );
 	
