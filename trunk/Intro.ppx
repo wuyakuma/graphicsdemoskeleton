@@ -9,43 +9,5 @@
 			<property name="Maximized" type="integer">1</property>
 			<property name="Active" type="integer">1</property>
 		</category>
-		<category name="Breakpoints">
-			<category name="Breakpoint1">
-				<property name="Line" type="integer">148</property>
-				<property name="Enabled" type="integer">1</property>
-				<property name="HitCount" type="integer">0</property>
-				<property name="Expression" type="string"></property>
-			</category>
-			<category name="Breakpoint2">
-				<property name="Line" type="integer">119</property>
-				<property name="Enabled" type="integer">1</property>
-				<property name="HitCount" type="integer">0</property>
-				<property name="Expression" type="string"></property>
-			</category>
-			<category name="Breakpoint3">
-				<property name="Line" type="integer">101</property>
-				<property name="Enabled" type="integer">1</property>
-				<property name="HitCount" type="integer">0</property>
-				<property name="Expression" type="string"></property>
-			</category>
-			<category name="Breakpoint4">
-				<property name="Line" type="integer">55</property>
-				<property name="Enabled" type="integer">1</property>
-				<property name="HitCount" type="integer">0</property>
-				<property name="Expression" type="string"></property>
-			</category>
-			<category name="Breakpoint5">
-				<property name="Line" type="integer">62</property>
-				<property name="Enabled" type="integer">1</property>
-				<property name="HitCount" type="integer">0</property>
-				<property name="Expression" type="string"></property>
-			</category>
-			<category name="Breakpoint6">
-				<property name="Line" type="integer">89</property>
-				<property name="Enabled" type="integer">1</property>
-				<property name="HitCount" type="integer">0</property>
-				<property name="Expression" type="string"></property>
-			</category>
-		</category>
 	</category>
 </settings>

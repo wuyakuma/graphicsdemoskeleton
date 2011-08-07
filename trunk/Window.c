@@ -2,8 +2,8 @@
 //
 // Skeleton Intro Coding
 //
-// by Wolfgang Engel (started in 2007)
-// Last time modified: 08/06/2011
+// by Wolfgang Engel 
+// Last time modified: 08/07/2011 (started sometime in 2007 or maybe much longer)
 //
 ///////////////////////////////////////////////////////////////////////
 #define WIN32_LEAN_AND_MEAN
@@ -11,15 +11,6 @@
 #include <Windows.h>
 #include <sal.h>
 #include <rpcsal.h>
-
-//#define __VISUALSTUDIO 
-
-
-// name the GUID's here ... otherwise with INITGUID you will have all the GUID's in the constant table
-
-//#ifndef __VISUALSTUDIO
-//#define DECLSPEC_SELECTANY 
-//#endif
 
 #define DEFINE_GUIDW(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) const GUID DECLSPEC_SELECTANY name = { l, w1, w2, { b1, b2,  b3,  b4,  b5,  b6,  b7,  b8 } }
 DEFINE_GUIDW(IID_ID3D10Texture2D,0x9B7E4C04,0x342C,0x4106,0xA1,0x9F,0x4F,0x27,0x04,0xF6,0x89,0xF0);
@@ -96,13 +87,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			&g_pd3dDevice);
 
 
-	// Create a render target view
+	// Create a back buffer render target, get a view on it to clear it later
 	ID3D10Texture2D *pBackBuffer;
 	g_pSwapChain->lpVtbl->GetBuffer( g_pSwapChain, 0, (REFIID ) &IID_ID3D10Texture2D, (LPVOID*)&(pBackBuffer) ) ;
-
-	
 	g_pd3dDevice->lpVtbl->CreateRenderTargetView( g_pd3dDevice, (struct ID3D10Resource *)pBackBuffer, NULL, &g_pRenderTargetView );
-	
 	g_pd3dDevice->lpVtbl->OMSetRenderTargets( g_pd3dDevice, 1, &g_pRenderTargetView, NULL );
 
 	// Setup the viewport
@@ -139,6 +127,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
    		float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
 		g_pd3dDevice->lpVtbl->ClearRenderTargetView(g_pd3dDevice, g_pRenderTargetView, ClearColor );
 
+		// 
 		g_pSwapChain->lpVtbl->Present( g_pSwapChain, 0, 0 );
 	}
 
