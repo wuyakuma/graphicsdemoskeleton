@@ -3,14 +3,12 @@
 // Skeleton Intro Coding
 //
 // by Wolfgang Engel 
-// Last time modified: 08/07/2011 (started sometime in 2007 or maybe much longer)
+// Last time modified: 08/07/2011 (started sometime in 2003 or maybe much longer ago)
 //
 ///////////////////////////////////////////////////////////////////////
 #define WIN32_LEAN_AND_MEAN
 
 #include <Windows.h>
-#include <sal.h>
-#include <rpcsal.h>
 
 #define DEFINE_GUIDW(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) const GUID DECLSPEC_SELECTANY name = { l, w1, w2, { b1, b2,  b3,  b4,  b5,  b6,  b7,  b8 } }
 DEFINE_GUIDW(IID_ID3D10Texture2D,0x9B7E4C04,0x342C,0x4106,0xA1,0x9F,0x4F,0x27,0x04,0xF6,0x89,0xF0);
@@ -27,19 +25,6 @@ DEFINE_GUIDW(IID_ID3D10Texture2D,0x9B7E4C04,0x342C,0x4106,0xA1,0x9F,0x4F,0x27,0x
 // allows to remove some system calls to reduce size
 #define WELLBEHAVIOUR
 
-// D3D 10 device variables
-// Global Variables:
-ID3D10Device *g_pd3dDevice;
-IDXGISwapChain *g_pSwapChain ;
-ID3D10RenderTargetView *g_pRenderTargetView ;
-
-// timer global variables
-DWORD		g_StartTime;
-DWORD		g_CurrentTime;
-
-// keep track if the game loop is still running
-BOOL		g_BRunning;
-
 // this is a simplified entry point ...
 void __stdcall WinMainCRTStartup()
 {
@@ -49,95 +34,91 @@ void __stdcall WinMainCRTStartup()
 // this is the main windows entry point ... 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
+	// D3D 10 device variables
+	// Global Variables:
+	ID3D10Device *pd3dDevice;
+	IDXGISwapChain *pSwapChain;
+	ID3D10RenderTargetView *pRenderTargetView;
+
+	// timer global variables
+	DWORD		StartTime;
+	DWORD		CurrentTime;
+
+	// keep track if the game loop is still running
+	BOOL		BRunning;
+
 	// the most simple window
 	HWND hWnd = CreateWindowEx(WS_EX_TOPMOST, 
-								"STATIC", 
+								"EDIT", 
 								0, 
 								WS_POPUP | WS_VISIBLE, 
 								WINPOSX, WINPOSY, 
 								WINWIDTH, WINHEIGHT, 
 								0, 0, 0, 0);
 
+
 	// don't show the cursor
 	ShowCursor(FALSE);
 
-    DXGI_SWAP_CHAIN_DESC sd;
-	sd.BufferCount = 1;
-	sd.BufferDesc.Width = WINWIDTH;
-	sd.BufferDesc.Height = WINHEIGHT;
-	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	sd.BufferDesc.RefreshRate.Numerator = 60;
-	sd.BufferDesc.RefreshRate.Denominator = 1;
-	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	sd.OutputWindow = hWnd;
-	sd.SampleDesc.Count = 1;
-	sd.SampleDesc.Quality = 0;
-	sd.SwapEffect = DXGI_SWAP_EFFECT_SEQUENTIAL;
-	sd.Flags = 0;
-
-	// full-screen or not
-	sd.Windowed = TRUE;
+	const static DXGI_SWAP_CHAIN_DESC sd = {{WINWIDTH, WINHEIGHT, {60, 1}, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 0}, {1, 0}, DXGI_USAGE_RENDER_TARGET_OUTPUT, 1, NULL, TRUE, DXGI_SWAP_EFFECT_SEQUENTIAL, 0};
+	
+	//
+	DXGI_SWAP_CHAIN_DESC temp = sd;
+	temp.OutputWindow = hWnd;
 
  	D3D10CreateDeviceAndSwapChain(NULL,
 			D3D10_DRIVER_TYPE_HARDWARE,
 			NULL, D3D10_CREATE_DEVICE_DEBUG,
 			D3D10_SDK_VERSION,
-			&sd,
-			&g_pSwapChain,
-			&g_pd3dDevice);
+			(DXGI_SWAP_CHAIN_DESC*)&temp,
+			&pSwapChain,
+			&pd3dDevice);
 
 
 	// Create a back buffer render target, get a view on it to clear it later
 	ID3D10Texture2D *pBackBuffer;
-	g_pSwapChain->lpVtbl->GetBuffer( g_pSwapChain, 0, (REFIID ) &IID_ID3D10Texture2D, (LPVOID*)&(pBackBuffer) ) ;
-	g_pd3dDevice->lpVtbl->CreateRenderTargetView( g_pd3dDevice, (struct ID3D10Resource *)pBackBuffer, NULL, &g_pRenderTargetView );
-	g_pd3dDevice->lpVtbl->OMSetRenderTargets( g_pd3dDevice, 1, &g_pRenderTargetView, NULL );
+	pSwapChain->lpVtbl->GetBuffer( pSwapChain, 0, (REFIID ) &IID_ID3D10Texture2D, (LPVOID*)&(pBackBuffer) ) ;
+	pd3dDevice->lpVtbl->CreateRenderTargetView( pd3dDevice, (struct ID3D10Resource *)pBackBuffer, NULL, &pRenderTargetView );
+	pd3dDevice->lpVtbl->OMSetRenderTargets( pd3dDevice, 1, &pRenderTargetView, NULL );
 
-	// Setup the viewport
-	D3D10_VIEWPORT vp;
-	vp.Width = WINWIDTH;
-	vp.Height = WINHEIGHT;
-	vp.MinDepth = 0;
-	vp.MaxDepth = 1;
-	vp.TopLeftX = 0;
-	vp.TopLeftY = 0;
-	g_pd3dDevice->lpVtbl->RSSetViewports( g_pd3dDevice, 1, &vp );
+	const static D3D10_VIEWPORT vp = {0, 0, WINWIDTH, WINHEIGHT, 0, 1}; 
+	pd3dDevice->lpVtbl->RSSetViewports( pd3dDevice, 1, &vp );
 
 	// setup timer 
-	g_StartTime = GetTickCount();
-	g_CurrentTime = 0;	
+	StartTime = GetTickCount();
+	CurrentTime = 0;	
 
 	// set the game loop to running by default
-	g_BRunning = TRUE;
+	BRunning = TRUE;
 	MSG msg;
 
-	while (g_BRunning)
+	while (BRunning)
 	{
 #if defined(WELLBEHAVIOUR)
 		// Just remove the message
 		PeekMessage(&msg, hWnd, 0, 0, PM_REMOVE);
 #endif
 		// Calculate the current demo time
-		g_CurrentTime = GetTickCount() - g_StartTime;
+		CurrentTime = GetTickCount() - StartTime;
 
 		// go out of game loop and shutdown
-		if (g_CurrentTime > 1300) 
-			g_BRunning = FALSE;
+		if (CurrentTime > 3300 || GetAsyncKeyState(VK_ESCAPE)) 
+			BRunning = FALSE;
 
-   		float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
-		g_pd3dDevice->lpVtbl->ClearRenderTargetView(g_pd3dDevice, g_pRenderTargetView, ClearColor );
+   		static const float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
+		pd3dDevice->lpVtbl->ClearRenderTargetView(pd3dDevice, pRenderTargetView, ClearColor );
 
 		// 
-		g_pSwapChain->lpVtbl->Present( g_pSwapChain, 0, 0 );
+		pSwapChain->lpVtbl->Present( pSwapChain, 0, 0 );
 	}
 
 	// release all D3D device related resources
 #if defined(WELLBEHAVIOUR)
-	    if( g_pd3dDevice ) g_pd3dDevice->lpVtbl->ClearState(g_pd3dDevice);
-	    if( g_pd3dDevice ) g_pd3dDevice->lpVtbl->Release(g_pd3dDevice);
-	    if( g_pRenderTargetView ) g_pRenderTargetView->lpVtbl->Release(g_pRenderTargetView);
-	    if( g_pSwapChain ) g_pSwapChain->lpVtbl->Release(g_pSwapChain);	 
-	    if( pBackBuffer ) pBackBuffer->lpVtbl->Release(pBackBuffer);	
+	    pd3dDevice->lpVtbl->ClearState(pd3dDevice);
+	    pd3dDevice->lpVtbl->Release(pd3dDevice);
+	    pRenderTargetView->lpVtbl->Release(pRenderTargetView);
+	    pSwapChain->lpVtbl->Release(pSwapChain);	 
+	    pBackBuffer->lpVtbl->Release(pBackBuffer);	
 #endif
 
     return (int) msg.wParam;
