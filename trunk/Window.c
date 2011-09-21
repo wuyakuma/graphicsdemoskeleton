@@ -28,6 +28,8 @@ DEFINE_GUIDW(IID_ID3D10Texture2D,0x9B7E4C04,0x342C,0x4106,0xA1,0x9F,0x4F,0x27,0x
 // allows to remove some system calls to reduce size
 #define WELLBEHAVIOUR
 
+#if 0 //defined(WELLBEHAVIOUR)
+
 // this is a simplified entry point ...
 void __stdcall WinMainCRTStartup()
 {
@@ -37,6 +39,23 @@ void __stdcall WinMainCRTStartup()
 // this is the main windows entry point ... 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
+#else
+// Take away prolog and epilog, then put a minial prolog back manually with assembly below. The function never returns so no epilog is necessary.
+__declspec( naked )  void __cdecl winmain()
+
+{
+	// Prolog
+	//__asm enter 0x10, 0;
+	__asm 
+	{
+		push ebp
+        mov ebp,esp
+        sub esp,__LOCAL_SIZE
+	}
+	
+	{ // Extra scope to make compiler accept the __decalspec(naked) with local variables
+
+#endif
 	// D3D 10 device variables
 	// Global Variables:
 	ID3D10Device *pd3dDevice;
@@ -118,5 +137,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	    pBackBuffer->lpVtbl->Release(pBackBuffer);	
 #endif
 
+#if 0 // defined(WELLBEHAVIOUR)
     return (int) msg.wParam;
+#else
+	}
+
+	ExitProcess(0);
+#endif
 }
