@@ -15,12 +15,12 @@ AS = poasm.exe#
 RC = porc.exe#
 LINK = polink.exe#
 SIGN = posign.exe#
-CCFLAGS = -Tx86-coff -MD -Os -Ox -Ob1 -fp:fast -W0 -Gz -Ze -Go -Gn -Zl #
+CCFLAGS = -Tx86-coff -MD -Os -Ox -Ob1 -fp:fast -W0 -Gd -Ze -Go -Gn -Zl #
 ASFLAGS = -AIA32 -Gz #
 RCFLAGS = #
 LINKFLAGS = -subsystem:windows -machine:x86 -map kernel32.lib user32.lib winmm.lib d3d10.lib#
 SIGNFLAGS = -timeurl:http://timestamp.verisign.com/scripts/timstamp.dll -location:CU -store:MY -errkill#
-INCLUDE = ..\..\..\..\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\..\..\..\Program Files\Microsoft SDKs\Windows\v7.1\Include;..\..\..\..\Program Files\Microsoft SDKs\Windows\v6.1\Include;$(PellesCDir)\Include\Win;$(PellesCDir)\Include#
+INCLUDE = ..\..\..\..\Program Files\Microsoft SDKs\Windows\v7.1\Include;..\..\..\..\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\..\..\..\Program Files\Microsoft SDKs\Windows\v6.1\Include;$(PellesCDir)\Include\Win;$(PellesCDir)\Include#
 LIB = ..\..\..\..\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;$(PellesCDir)\Lib\Win;$(PellesCDir)\Lib#
 
 # 
@@ -37,6 +37,6 @@ output\Window.obj: \
 	Window.c
 	$(CC) $(CCFLAGS) "$!" -Fo"$@"
 
-.SILENT:
-
 .EXCLUDEDFILES:
+
+.SILENT:

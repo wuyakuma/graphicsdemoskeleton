@@ -7,8 +7,11 @@
 //
 ///////////////////////////////////////////////////////////////////////
 #define WIN32_LEAN_AND_MEAN
+#define WIN32_EXTRA_LEAN
 
 #include <Windows.h>
+#include <sal.h>
+#include <rpcsal.h>
 
 #define DEFINE_GUIDW(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) const GUID DECLSPEC_SELECTANY name = { l, w1, w2, { b1, b2,  b3,  b4,  b5,  b6,  b7,  b8 } }
 DEFINE_GUIDW(IID_ID3D10Texture2D,0x9B7E4C04,0x342C,0x4106,0xA1,0x9F,0x4F,0x27,0x04,0xF6,0x89,0xF0);
@@ -48,14 +51,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	BOOL		BRunning;
 
 	// the most simple window
-	HWND hWnd = CreateWindowEx(WS_EX_TOPMOST, 
-								"EDIT", 
-								0, 
-								WS_POPUP | WS_VISIBLE, 
-								WINPOSX, WINPOSY, 
-								WINWIDTH, WINHEIGHT, 
-								0, 0, 0, 0);
-
+	HWND hWnd = CreateWindow("edit", 0, WS_POPUP | WS_VISIBLE, WINPOSX, WINPOSY, WINWIDTH, WINHEIGHT, 0, 0, 0, 0);
 
 	// don't show the cursor
 	ShowCursor(FALSE);
@@ -63,7 +59,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	const static DXGI_SWAP_CHAIN_DESC sd = {{WINWIDTH, WINHEIGHT, {60, 1}, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 0}, {1, 0}, DXGI_USAGE_RENDER_TARGET_OUTPUT, 1, NULL, TRUE, DXGI_SWAP_EFFECT_SEQUENTIAL, 0};
 	
 	//
-	DXGI_SWAP_CHAIN_DESC temp = sd;
+	DXGI_SWAP_CHAIN_DESC temp;
+	temp = sd;
 	temp.OutputWindow = hWnd;
 
  	D3D10CreateDeviceAndSwapChain(NULL,
