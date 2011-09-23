@@ -61,7 +61,7 @@ __declspec( naked )  void __cdecl winmain()
 	// Global Variables:
 	ID3D11Device *pd3dDevice;
 	IDXGISwapChain *pSwapChain;
-	ID3D11RenderTargetView *pRenderTargetView = NULL;
+	ID3D11RenderTargetView *pRenderTargetView;
 	ID3D11DeviceContext *pImmediateContext;
 
 	// timer global variables
